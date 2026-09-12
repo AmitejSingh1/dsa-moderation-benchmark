@@ -12,13 +12,22 @@
 
 This manifest documents the official, first-party supplementary transparency datasets acquired for the three core benchmark services: **YouTube**, **Instagram (Meta)**, and **TikTok**.
 
-### Fundamental Analytical Boundary:
-1. **Separation of Layers**: Supplementary platform datasets are **never merged or added** to the EU DSA Statements of Reasons (SoR) database.
-2. **Distinct Analytical Functions**:
-   - **EU DSA Transparency Database**: Primary, harmonized, event-level legal record of moderation actions within the European Union (late September 2023 onward).
-   - **Supplementary Platform Reports**: External macro-historical baselines, automation adoption trajectories, and exposure/viewership context (2021 to 2026).
-3. **Temporal Alignment**:
-   - The approved supplementary window spans **2021Q1 through 2026Q1** (21 quarters).
+### Fundamental Analytical Boundary & Scope Scoping:
+1. **Separation of Layers**: Supplementary platform datasets are **never merged, equated, or added** to the EU DSA Statements of Reasons (SoR) database.
+2. **Authoritative Primacy**:
+   - **EU DSA Transparency Database**: The **PRIMARY and ONLY cross-platform quantitative benchmark** for this study (specifically the 11-month harmonized schema era: July 1, 2025 through May 31, 2026).
+   - **Supplementary Platform Data**: Acquired and preserved locally on disk under `data/raw/supplementary/` for full auditability, reproducibility, and provenance, but strictly scoped downstream:
+     - **YouTube**: `ACQUIRED / RETAINED RAW / NOT USED IN DOWNSTREAM QUANTITATIVE ANALYSIS` (Reason: Automated Flagging measures detection rather than automated enforcement decision-making).
+     - **Instagram**: `ACQUIRED / RETAINED RAW / NOT USED IN DOWNSTREAM QUANTITATIVE ANALYSIS` (Reason: Proactive Rate measures detection before user reporting rather than automated enforcement decision-making).
+     - **TikTok**: `ACQUIRED / RETAINED RAW / LIMITED HISTORICAL CONTEXT USE` (Reason: Automated Removal Rate explicitly measures videos removed without human review; closest conceptual analogue to DSA `automated_decision`, but differing in unit and reporting system).
+3. **Limited Downstream Use for TikTok**:
+   - TikTok's self-reported historical Automated Removal Rate (`v_auto / v_tot`) is retained for **ONE limited purpose**: a short historical narrative/context section in the final report illustrating that TikTok's reported share of videos removed by automation rose from ~14% in 2021Q1 to ~97% in 2026Q1.
+   - Always caveated: unit is removed videos (not DSA SoRs), conceptually related but NOT directly comparable, must NOT be merged mathematically with DSA, and must NOT be used to validate the numerical level of the DSA automation rate.
+4. **No Cross-Platform Supplementary Taxonomy**:
+   - No category reconciliation or cross-platform taxonomy mapping will be constructed for YouTube or Instagram supplementary data.
+   - Platform-reported metrics (Automated Flagging, Proactive Rate, Automated Removal Rate) measure distinct operational phenomena and will NOT be compared side-by-side.
+5. **Temporal Alignment**:
+   - The acquired supplementary window spans **2021Q1 through 2026Q1** (21 quarters).
    - *Note on baseline comparison*: The EU DSA Transparency Database came into legal force on **September 25, 2023** (late in 2023Q3). Consequently, 2023Q3 represents a partial/mixed transition quarter in the DSA data. The supplementary dataset covers 10 full pre-DSA quarters (2021Q1 through 2023Q2), 1 transition quarter (2023Q3), and 10 post-DSA quarters (2023Q4 through 2026Q1).
 
 ---
@@ -30,6 +39,7 @@ This manifest documents the official, first-party supplementary transparency dat
 | Dimension | Details |
 | :--- | :--- |
 | **Service** | YouTube (Google LLC / Alphabet Inc.) |
+| **Downstream Analytical Status** | **ACQUIRED / RETAINED RAW / NOT USED IN DOWNSTREAM QUANTITATIVE ANALYSIS**<br>*(Reason: Automated Flagging measures detection rather than automated enforcement decision-making)* |
 | **Official Source** | Google Transparency Report — YouTube Community Guidelines Transparency Report |
 | **Base Endpoint** | `https://transparencyreport.google.com/transparencyreport/api/v3/youtubepolicy/` |
 | **Retrieval Mechanism** | Direct HTTP GET queries to verified public REST API JSON endpoints |
@@ -58,6 +68,7 @@ This manifest documents the official, first-party supplementary transparency dat
 | Dimension | Details |
 | :--- | :--- |
 | **Service** | Instagram (Meta Platforms, Inc.) |
+| **Downstream Analytical Status** | **ACQUIRED / RETAINED RAW / NOT USED IN DOWNSTREAM QUANTITATIVE ANALYSIS**<br>*(Reason: Proactive Rate measures detection before user reporting rather than automated enforcement decision-making)* |
 | **Official Source** | Meta Transparency Center — Community Standards Enforcement Report (CSER) |
 | **Official URL** | `https://transparency.meta.com/reports/community-standards-enforcement/` |
 | **Retrieval Mechanism** | Official GraphQL Query (`TransparencyReportCSERRootCSVQuery`, Doc ID `31742207542036840`) with dynamic session token extraction |
@@ -87,6 +98,7 @@ This manifest documents the official, first-party supplementary transparency dat
 | Dimension | Details |
 | :--- | :--- |
 | **Service** | TikTok (ByteDance Ltd.) |
+| **Downstream Analytical Status** | **ACQUIRED / RETAINED RAW / LIMITED HISTORICAL CONTEXT USE**<br>*(Reason: Automated Removal Rate explicitly measures videos removed without human review; closest conceptual analogue to DSA automated_decision, but differing in unit and reporting system)* |
 | **Official Source** | TikTok Transparency Center — Community Guidelines Enforcement Reports |
 | **Official Source Path** | `https://sf16-va.tiktokcdn.com/obj/eden-va2/zkyhviozhk_YLNJ/ljhwZthlaukjlkulzlp/2026Q1/` |
 | **Retrieval Mechanism** | Direct HTTP retrieval of official published dashboard HTML/JS artifacts containing `window.injectedData` |
@@ -110,6 +122,7 @@ This manifest documents the official, first-party supplementary transparency dat
 #### Known Limitations & Invariants:
 - **Published Boundary**: TikTok publishes on a quarterly lag; `2026Q1` is the latest officially published quarter (`2026Q2` is unpublished).
 - **Closest Conceptual Analogue to DSA automated_decision**: TikTok's automated removal rate (`v_auto / v_tot`) serves as the closest conceptual analogue to DSA `automated_decision`. TikTok measures the share of removed videos removed automatically without human review, whereas the DSA field is defined at the Statement-of-Reasons level. Therefore the concepts are closely related but the units and reporting systems differ.
+- **Limited Downstream Usage**: Retained solely for historical context in the final report. Not merged with DSA, and not used to validate numerical levels of DSA automation.
 
 ---
 
@@ -159,4 +172,25 @@ All 21 calendar quarters are 100% covered across all three platforms:
 | **TikTok** | Total & Auto Removals | 21/21 Quarters (100%) | Continuous time series; automated removal volume grows from 8.8M (14.3%) in 2021Q1 to 178.0M (96.7%) in 2026Q1. |
 | **TikTok** | Proactive & <24h Rates | 21/21 Quarters (100%) | Proactive rate exceeds 91% in 2021Q1 and reaches 99.3% in 2026Q1. |
 | **TikTok** | Zero-View Removals | 10/21 Quarters (granular) | Detailed view volume distributions available for recent quarters (82.2% at 0 views in 2026Q1). |
+
+---
+
+## 5. Downstream Analytical Scoping & Exclusion Summary
+
+To ensure methodological rigor and avoid creating false cross-source equivalences:
+
+1. **Downstream Exclusion of YouTube and Instagram Supplementary Data**:
+   - YouTube Automated Flagging and Instagram Proactive Rate measure detection/flagging stages, whereas TikTok Automated Removal Rate measures automated enforcement decisions.
+   - Presenting these metrics side-by-side creates a false equivalence across disparate operational stages.
+   - Consequently, YouTube and Instagram supplementary datasets are **excluded from downstream quantitative analysis, modeling, category reconciliation, and benchmark calculations**. (They may be mentioned briefly in methodology only to document why their self-reported automation metrics measure distinct operational stages).
+   - No category reconciliation, crosswalk, or cross-platform taxonomy will be constructed for YouTube or Instagram supplementary data.
+
+2. **Downstream Role for TikTok Supplementary Data**:
+   - TikTok's self-reported Automated Removal Rate (`v_auto / v_tot`) is retained for **narrative context only** in the final report.
+   - It illustrates the multi-year macro context of automated decision growth (from ~14% in 2021Q1 to ~97% in 2026Q1).
+   - TikTok's automated removal rate is the closest conceptual analogue to DSA `automated_decision`, but differing in unit of analysis (removed videos vs Statements of Reasons) and reporting standard.
+   - It will **never** be merged mathematically with DSA data and will **never** be used to validate the numerical level of DSA automation.
+
+3. **Preservation of Raw Files on Disk**:
+   - All acquired raw files remain intact under `data/raw/supplementary/` (gitignored) to guarantee full end-to-end reproducibility, auditability, and provenance without deletion.
 

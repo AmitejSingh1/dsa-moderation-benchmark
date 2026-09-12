@@ -14,13 +14,21 @@ This inventory evaluates the official, first-party transparency and enforcement 
 
 While the EU DSA Transparency Database provides the authoritative, harmonized, event-level record of moderation decisions (Statements of Reasons) within the European Union from late September 2023 onward, each platform has published voluntary or regulatory quarterly transparency reports for several years prior.
 
-These platform-published reports serve as valuable **supplementary context** for:
-1. Establishing long-term baseline enforcement trajectories before the DSA came into force (2018–2023).
-2. Cross-validating high-level directional trends (e.g., shifts in automation reliance, changes in dominant violation categories).
-3. Understanding platform-specific definitions, enforcement funnels, and operational constraints that do not map 1:1 to DSA legal categories.
-
-> **CRITICAL METHODOLOGICAL PRINCIPLE**  
-> Platform-reported metrics and EU DSA Statements of Reasons (SoRs) **cannot be directly equated or merged**. DSA SoRs measure statutory decision notices issued within the EU regulatory scope, whereas platform transparency reports count physical content items (videos, posts, accounts) actioned globally under platform terms of service. They must be evaluated directionally and comparatively as distinct analytical layers.
+> **CRITICAL METHODOLOGICAL PRINCIPLE & SCOPE RESTRICTION**  
+> **The EU DSA Transparency Database is the PRIMARY and ONLY cross-platform quantitative benchmark** for this study (specifically the 11-month harmonized schema era: July 1, 2025 through May 31, 2026).  
+> 
+> Platform-published metrics are fundamentally non-comparable across services and cannot be merged or compared side-by-side:
+> - **YouTube Automated Flagging** measures system detection/flagging (not decision).
+> - **Instagram Proactive Rate** measures detection before user reporting (not decision).
+> - **TikTok Automated Removal Rate** measures automated enforcement decisions executed without human intervention.
+>
+> Presenting these three side-by-side as "automation metrics" would create a false cross-platform equivalence that undermines the purpose of standardized DSA benchmarking.  
+> 
+> **Downstream Analytical Scoping**:
+> - **YouTube**: `ACQUIRED / RETAINED RAW / NOT USED IN DOWNSTREAM QUANTITATIVE ANALYSIS`. (Reason: Automated Flagging measures detection rather than automated enforcement decision-making).
+> - **Instagram**: `ACQUIRED / RETAINED RAW / NOT USED IN DOWNSTREAM QUANTITATIVE ANALYSIS`. (Reason: Proactive Rate measures detection before user reporting rather than automated enforcement decision-making).
+> - **TikTok**: `ACQUIRED / RETAINED RAW / LIMITED HISTORICAL CONTEXT USE`. Retained exclusively for a single, narrow narrative context purpose: illustrating that TikTok's self-reported automated removal share rose from ~14% in 2021Q1 to ~97% in 2026Q1. Always caveated: unit is removed videos (not DSA SoRs), closest conceptual analogue to DSA `automated_decision`, not directly equivalent, and never merged mathematically or used to validate DSA levels.
+> - **No Cross-Platform Supplementary Taxonomy**: No category reconciliation or cross-platform harmonization will be constructed for YouTube or Instagram supplementary data.
 
 ---
 
@@ -77,18 +85,19 @@ Platforms categorize violations according to their respective Terms of Service a
 | **Spam, Scams & Integrity** | Spam or misleading [ID 5] | Spam; Fake Accounts | Integrity and Authenticity (Deceptive Behaviors, Fake Engagement, Frauds & Scams) | **Low**: Structural disparity (account-level enforcement on Meta vs content sweeps on YouTube/TikTok) |
 | **Misinformation / Civic** | Misinformation [ID 12 in alt map] | Fact-checked misinformation (separate reporting) | Integrity and Authenticity (Civic and Election Integrity, Misinformation, Edited Media/AIGC) | **Moderate**: Differing civic integrity and synthetic media policies |
 
+> **DOWNSTREAM SCOPE DIRECTIVE**: As established in the project scope correction, **no category reconciliation, concordance crosswalk, or cross-platform taxonomy mapping will be constructed for YouTube or Instagram supplementary data**. The cross-platform quantitative benchmark relies exclusively on standardized EU DSA categories.
+
 ---
 
-## 6. Comparability Assessment Matrix
+## 6. Comparability Assessment & Downstream Usage Matrix
 
-We classify the comparability of supplementary platform reports against EU DSA data into four distinct levels:
+We classify the analytical status and comparability of supplementary platform reports against the EU DSA benchmark:
 
-| Level | Definition | Applicable Metrics & Categories | Methodological Guidance |
-| :--- | :--- | :--- | :--- |
-| **Direct** | Statistically equivalent or 1:1 interchangeable. | **NONE** | **Never combine, equate, or directly subtract DSA counts from platform report counts.** |
-| **Directional** | Metrics track the same underlying operational phenomenon over time, allowing trend and growth rate comparisons. | • Direction of automated detection adoption (proactive detection trend).<br>• Relative share of top violation categories (e.g., adult content vs hate speech).<br>• Appeal reinstatement success rates. | Compare % changes quarter-over-quarter and relative proportions across platforms. |
-| **Context Only** | Informs qualitative or structural understanding of platform architecture and historical baselines, but cannot be quantitatively normalized. | • Absolute content volumes actioned globally.<br>• Account terminations.<br>• Pre-2023 baseline enforcement activity. | Use to contextualize the scale and historical maturation of moderation systems prior to DSA. |
-| **Not Useful** | Metrics that appear similar but suffer from incompatible definitions, scope, or missing denominators. | • Comparing raw Instagram "Content Actioned" to YouTube "Videos Removed".<br>• Equating Meta's "Proactive Rate" with DSA's `automated_decision = True`. | Do not present on identical chart axes without explicit distinction warnings. |
+| Service | Raw Acquisition Status | Analytical Status Downstream | Metric Evaluated | Primary Reason for Scoping Decision |
+| :--- | :--- | :--- | :--- | :--- |
+| **YouTube** | Acquired & Preserved Raw (84 JSON files) | **NOT USED IN DOWNSTREAM QUANTITATIVE ANALYSIS** | Automated Flagging | Measures system *detection/flagging* rather than automated enforcement decision-making; cannot be compared side-by-side with decision metrics. |
+| **Instagram** | Acquired & Preserved Raw (1 CSV file, 5,409 rows) | **NOT USED IN DOWNSTREAM QUANTITATIVE ANALYSIS** | Proactive Rate | Measures detection *before user reporting* rather than automated enforcement decision-making; cannot be compared side-by-side with decision metrics. |
+| **TikTok** | Acquired & Preserved Raw (5 dashboard payloads) | **LIMITED HISTORICAL CONTEXT USE** | Automated Removal Rate (`v_auto / v_tot`) | Explicitly measures removals executed solely by automation without human review; closest conceptual analogue to DSA `automated_decision`. Used exclusively for a narrow historical narrative section. |
 
 ---
 
@@ -115,39 +124,43 @@ Enforcement Pipeline:
 - **Dimension B**: Automated / system flagging (System detection).
 - **Dimension C**: Moderation decision without human review (Automated enforcement).
 
-### Verified Platform Metrics and DSA Classification:
+### Platform Metric Classification & Scoping:
 
 1. **YouTube "Automated Flagging"**:
    - *Official Definition*: Removals where the first flag was generated by automated detection systems.
    - *Denominator*: Total videos removed for Community Guidelines violations.
    - *Enforcement Stage*: **Stage B (Automated Flagging / Detection)**. Once flagged, videos may be routed to human review or automated removal. YouTube does not report the automated decision split.
    - *Classification vs DSA*:
-     - `automated_detection`: **Closest conceptual analogue** (both measure whether system automation initiated the detection).
-     - `automated_decision`: **Not equivalent** (does not indicate whether enforcement occurred without human review).
+     - `automated_detection`: Closest conceptual analogue.
+     - `automated_decision`: Not equivalent.
+   - *Downstream Analytical Status*: **ACQUIRED / RETAINED RAW / NOT USED IN DOWNSTREAM QUANTITATIVE ANALYSIS** (Reason: Automated Flagging measures detection rather than automated enforcement decision-making).
 
 2. **Meta / Instagram "Proactive Rate"**:
    - *Official Definition*: Percentage of actioned content detected by Meta's systems before users reported it.
    - *Denominator*: Total Content Actioned under the specific policy area on Instagram.
    - *Enforcement Stage*: **Stage A/B (Proactive Detection)**. Proactively detected content is frequently routed to human review teams; Meta does not publish an automated decision rate.
    - *Classification vs DSA*:
-     - `automated_detection`: **Closest conceptual analogue** (directionally comparable indicator of proactive machine detection).
-     - `automated_decision`: **Not equivalent** (does NOT measure automated enforcement without human review).
+     - `automated_detection`: Closest conceptual analogue.
+     - `automated_decision`: Not equivalent.
+   - *Downstream Analytical Status*: **ACQUIRED / RETAINED RAW / NOT USED IN DOWNSTREAM QUANTITATIVE ANALYSIS** (Reason: Proactive Rate measures detection before user reporting rather than automated enforcement decision-making).
 
 3. **TikTok "Proactive Removal Rate"**:
    - *Official Definition*: Percentage of short-form video removals identified and removed before receiving any user report.
    - *Denominator*: Total short-form videos removed for Community Guidelines violations.
    - *Enforcement Stage*: **Stage A (Proactive Detection)**. Includes both human-reviewed and automated removals.
    - *Classification vs DSA*:
-     - `automated_detection`: **Closest conceptual analogue** (measures proactive system discovery prior to external user notice).
-     - `automated_decision`: **Not equivalent** (measures detection timing, not decision agency).
+     - `automated_detection`: Closest conceptual analogue.
+     - `automated_decision`: Not equivalent.
+   - *Downstream Analytical Status*: **NOT USED IN DOWNSTREAM QUANTITATIVE BENCHMARKING**.
 
 4. **TikTok "Automated Removal Rate"**:
    - *Official Definition*: Percentage of short-form videos removed where the removal decision was executed **solely by automated systems without human review**.
    - *Denominator*: Total short-form videos removed for Community Guidelines violations (`v_auto / v_tot`).
    - *Enforcement Stage*: **Stage C (Automated Decision / Enforcement)**.
    - *Classification vs DSA*:
-     - `automated_detection`: **Not equivalent** (decision-level, not detection-level).
+     - `automated_detection`: Not equivalent (decision-level, not detection-level).
      - `automated_decision`: **Closest conceptual analogue to DSA automated_decision**. TikTok measures the share of removed videos removed automatically without human review, whereas the DSA field is defined at the Statement-of-Reasons level. Therefore the concepts are closely related but the units and reporting systems differ.
+   - *Downstream Analytical Status*: **ACQUIRED / RETAINED RAW / LIMITED HISTORICAL CONTEXT USE**. Retained for a single, narrow narrative purpose in the final report to show the historical expansion of TikTok automated removals (rising from ~14% in 2021Q1 to ~97% in 2026Q1). It must NOT be merged mathematically with DSA, and must NOT be used to validate the numerical level of the DSA automation rate.
 
 ---
 
@@ -219,12 +232,14 @@ Based on empirical source verification, **OPTION A (Q1 2021 through Q1 2026 — 
 
 3. **Detection vs. Decision Conflation**:
    - Meta "Proactive Rate" = Automated **Detection** (system flagged content before user report; does not measure automated decision).
+   - YouTube "Automated Flagging" = Automated **Detection** (system flagged content; does not measure automated decision).
    - TikTok "Automated Removal Rate" = Closest conceptual analogue to DSA `automated_decision` (TikTok measures the share of removed videos removed automatically without human review, whereas the DSA field is defined at the Statement-of-Reasons level; therefore the concepts are closely related but the units and reporting systems differ).
    - DSA SoR distinguishes both via separate flags (`automated_detection` and `automated_decision`). Comparing detection rates to decision rates is methodologically invalid.
+   - **Analytical Consequence**: Because YouTube and Instagram do not publish automated decision metrics, their supplementary data cannot be benchmarked alongside TikTok or DSA automated decision rates and are **excluded from downstream quantitative analysis, modeling, category reconciliation, and benchmark calculations**. (They may be mentioned briefly in methodology only to document why their self-reported automation metrics measure distinct operational stages).
 
-4. **Category Semantic Drift**:
-   - A violation classified as "Bullying and Harassment" on Instagram may fall under "Defamation" or "Negative reputation" in DSA SoR taxonomy, or "Harassment & cyberbullying" on YouTube.
-   - High-level category comparisons must rely on explicit concordance crosswalks.
+4. **Category Semantic Drift & Crosswalk Scope**:
+   - Violation categories differ across platform terms of service and legal DSA categories.
+   - To preserve methodological rigor and avoid creating false equivalences, **no cross-platform supplementary taxonomy or category crosswalk will be constructed for YouTube or Instagram**. The cross-platform benchmark relies strictly on standardized DSA fields.
 
 5. **Impression / Prevalence Asymmetry**:
    - High removal counts do not necessarily indicate high platform risk; they may indicate aggressive automated sweeps of zero-view spam.
@@ -237,7 +252,9 @@ Based on empirical source verification, **OPTION A (Q1 2021 through Q1 2026 — 
 1. **Isolated Storage**:
    - All supplementary raw files reside in `data/raw/supplementary/` and are strictly excluded from version control.
 2. **Authoritative Primacy**:
-   - The EU DSA Transparency Database remains the primary quantitative benchmark. Platform reports provide supplementary macro-historical baselines and exposure context only.
-3. **Decoupled Processing Bridge (Phase 4)**:
-   - Separate data loaders will process DSA aggregates (`src/load_dsa.py`) and supplementary quarterly reports (`src/load_supplementary.py`) without cross-contaminating datasets.
+   - The EU DSA Transparency Database remains the **primary and only cross-platform quantitative benchmark**.
+3. **Simplified Phase 4 Integration**:
+   - Phase 4 focuses strictly on the standardized EU DSA dataset (processing `data/raw/dsa_aggregates/`, legacy to harmonized schema transition, category flags, and multi-label behavior).
+   - YouTube and Instagram supplementary datasets are excluded from downstream quantitative analysis, modeling, category reconciliation, and benchmark calculations (they may be mentioned briefly in methodology to document source investigations and operational stage distinctions).
+   - TikTok supplementary data (`v_auto / v_tot`) is retained solely for a narrow narrative context section in final reporting.
 
