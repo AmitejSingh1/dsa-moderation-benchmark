@@ -1,0 +1,6 @@
+dsa-tdb
+pandas
+pyarrow
+matplotlib
+plotly
+jupyter
