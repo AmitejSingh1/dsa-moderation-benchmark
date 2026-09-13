@@ -1,97 +1,116 @@
 # Cross-Platform Content Moderation Benchmark
 
-> **Current Project Status: Phase 2 — Data Acquisition (Complete)**  
-> All 33 monthly complete-aggregate Parquet partitions covering the full historical window (**2023-09-25 through 2026-05-31**) have been successfully acquired and validated locally under `data/raw/dsa_aggregates/`. All raw source datasets are preserved in their original global format and excluded from Git. Subsequent phases will handle supplementary historical data, schema reconciliation, metric computation, and report generation.
+**661.7M EU DSA moderation records reveal similar automated detection — but sharply different decision-stage automation in Scams & Fraud.**
+
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![EU DSA Benchmark](https://img.shields.io/badge/EU%20DSA-Transparency%20Database-orange.svg)](https://transparency.dsa.ec.europa.eu/)
+[![Status](https://img.shields.io/badge/status-complete-brightgreen.svg)]()
+[![Methodology](https://img.shields.io/badge/methodology-MAPPING.md-blueviolet.svg)](MAPPING.md)
 
 ---
 
-## Overview & Problem Statement
+## Key Finding
 
-As major digital platforms handle massive volumes of user-generated content daily, understanding how content moderation decisions are executed has become critical for Trust & Safety policy and operations. 
+```
+========================================================================================
+"Automated detection is nearly universal across TikTok, YouTube, and Instagram, but
+decision-stage automation diverges sharply in Scams & Fraud: YouTube reports only 0.25%
+of scam/fraud decisions with any automation, versus 84.94% for TikTok and 99.45% for Instagram."
+========================================================================================
+```
 
-This project addresses the core question:
-> **How does one platform's content moderation automation and enforcement behavior compare to its competitors, and where should a safety team focus its efforts as a result?**
+Across **90,782,865 represented Statements of Reasons** in **Scams & Fraud**, automated detection exceeds 91% across all platforms, yet final decision execution diverges by up to 99 percentage points:
+- **YouTube**: **0.25%** Decision with Any Automation (81,048 of **32,688,662 SoRs**; 99.75% reported as decisions taken without automated means)
+- **TikTok**: **84.94%** Decision with Any Automation (8,597,144 of **10,121,069 SoRs**; 84.94% fully automated)
+- **Instagram**: **99.45%** Decision with Any Automation (47,710,406 of **47,973,134 SoRs**; 98.77% account terminated)
 
-### Core Benchmark Platforms
-We benchmark content moderation across three primary services:
-- **TikTok**
-- **YouTube**
-- **Instagram**
+This pattern is temporally persistent across all 11 continuous monthly observation partitions with **zero rank reversals**.
 
-> **Deliberate Scope Decision**: In the EU DSA Transparency Database, platforms submit Statements of Reasons (SoRs) individually. Facebook and Threads are registered as distinct services with separate Platform UIDs (`32` and `80`). Facebook and Threads are deliberately excluded from our primary benchmark scope to focus the comparative analysis on consumer short-form video and visual sharing ecosystems, not due to lack of data availability. Instagram and Facebook are never collapsed into a generic "Meta" platform.
-
-By analyzing standardized disclosures from the **EU Digital Services Act (DSA) Transparency Database** ([transparency.dsa.ec.europa.eu](https://transparency.dsa.ec.europa.eu)), all three platforms are evaluated on an equal footing.
-
----
-
-## Core Metrics
-
-### Primary Metrics: Automation Rates
-To assess operational reliance on automation versus human review:
-- **`automated_detection`**: Indicates whether automated mechanisms initially detected the flagged content.
-- **`automated_decision`**: Indicates whether the final decision and enforcement action were taken entirely through automated means without individual human intervention.
-
-### Secondary Metric: Enforcement Action Distribution
-Under Article 17 of the DSA, platforms report different types of enforcement actions across multiple distinct schema fields:
-- **`DECISION_VISIBILITY_*` flags**: Content-level actions (e.g., content removal, disablement, demotion/de-amplification, age restriction, labeling).
-- **`decision_account`**: Account-level actions (e.g., account suspension, account termination).
-- **`decision_monetary`**: Financial actions (e.g., demonetization, suspension of monetary benefits).
-- **`decision_provision`**: Service-level restrictions under Article 17(1)(c) (e.g., suspension or termination of service provision).
-
-> **Methodological Note on Enforcement Metrics**:  
-> In the raw DSA schema, `decision_provision` specifically captures service termination/suspension and is null for the vast majority of individual content-level moderation actions (which are recorded under `DECISION_VISIBILITY_*`). Therefore, `decision_provision` alone does not represent overall enforcement. In Phase 5, the processing pipeline will construct a consolidated enforcement-action dimension combining visibility, account, monetary, and service provision actions before comparing enforcement distributions across platforms.
+![Hero Chart: Scams & Fraud Decision Automation Divide](reports/charts/02_scams_decision_automation.png)
 
 ---
 
-## Data Acquisition & Coverage
+## Why It Matters
 
-- **Data Source**: EU DSA Transparency Database ([transparency.dsa.ec.europa.eu](https://transparency.dsa.ec.europa.eu)).
-- **Acquisition Format**: Official complete aggregated Parquet archives (`aggregated-complete`) downloaded via `dsa-tdb`.
-- **Historical Source Coverage**: **2023-09-25 through 2026-05-31** (inception of the DSA Transparency Database through the latest available aggregate dump).
-- **Partitions Acquired**: **33 consecutive monthly partitions** (2023-09 through 2026-05), verified with zero missing months.
-- **Primary Comparable Analysis Window**: **2025-07-01 through 2026-05-31** (an **11-month period** under the harmonized reporting schema).
-- **Core Benchmark Services**: TikTok, YouTube, Instagram (present across all 33 monthly partitions).
-- **Raw Data Integrity Policy**: Official aggregate downloads are generated globally across all platforms and are preserved completely unchanged under `data/raw/dsa_aggregates/` (~5.15 GB local storage). Raw datasets are strictly excluded from Git via `.gitignore`. Platform filtering will be executed downstream during Phase 5 processing.
+In modern Trust & Safety engineering, high-volume automated detection is standard practice across all major platforms. However, the benchmark shows that similar automated-detection rates can coexist with very different reported levels of decision-stage automation.
+
+Platform-wide averages can also obscure category-specific behavior: the largest differences appear in particular policy areas rather than across the board. For Trust & Safety teams, identifying these category-level divergences provides an empirical starting point for investigating whether differences reflect distinct operational trade-offs (such as handling time, false-positive risk, or review capacity) or reporting-architecture artifacts.
 
 ---
 
-## DSA Schema Transition & Analysis Windows
+## Dataset
 
-The European Commission introduced a major reporting and submission schema revision taking effect on **2025-07-01**. To maintain methodological rigor, records from the legacy and harmonized schema eras are tracked separately:
-
-1. **Primary Analysis Window (Harmonized Schema Era)**:
-   - **Coverage**: **2025-07-01 through 2026-05-31** (an **11-month period**).
-   - Core cross-platform comparisons in Phases 5 and 6 focus exclusively on this window where reporting fields are fully harmonized.
-2. **Supplementary Historical Context (Legacy Schema Era)**:
-   - **Coverage**: **2023-09-25 through 2025-06-30** (22 months).
-   - Preserved locally as supplementary historical context; not blended directly into the primary comparative benchmark without explicit schema reconciliation.
-3. **Conceptual Distinction: `created_at` vs. `application_date`**:
-   - **`created_at`**: The timestamp when the Statement of Reasons was submitted and ingested into the DSA database. It represents submission timing and governs monthly source partitioning, schema-era classification (`created_at >= 2025-07-01`), and membership in the primary analysis window.
-   - **`application_date`**: The date when the moderation action was applied by the platform to the content or account.
+This study analyzes standardized, regulatory disclosures submitted under Article 17 of the **EU Digital Services Act (DSA)**:
+- **Data Source**: European Commission DSA Transparency Database ([transparency.dsa.ec.europa.eu](https://transparency.dsa.ec.europa.eu)).
+- **Benchmark Platforms**: **TikTok**, **YouTube**, and **Instagram**.
+- **Observation Window**: **July 1, 2025 through May 31, 2026** (11 continuous monthly partitions under the post-June 2025 harmonized schema).
+- **Benchmark Population**: Exactly **661,664,998 represented Statements of Reasons (SoRs)** across 17,223,049 physical Parquet records.
+  - **TikTok**: 480,532,153 SoRs (72.62%)
+  - **YouTube**: 88,376,558 SoRs (13.36%)
+  - **Instagram**: 92,756,287 SoRs (14.02%)
 
 ---
 
-## Data Quality & Application Date QA Note
+## Methodology
 
-A comprehensive diagnostic of `application_date` across all 33 downloaded monthly partitions for the three core benchmark services confirmed high temporal data quality:
-- **TikTok**: **0** future-dated represented SoRs (`application_date > 2026-05-31`); **47,201** SoRs (**0.00191%**) have `application_date < 2023-09-25`.
-- **YouTube**: **0** future-dated represented SoRs; **0** SoRs (**0.00000%**) before 2023-09-25.
-- **Instagram**: **0** future-dated represented SoRs; **688** SoRs (**0.00029%**) have `application_date < 2023-09-25`.
+The benchmark pipeline strictly enforces the 12 approved methodological rules documented in [MAPPING.md](MAPPING.md):
+- **Detection vs. Decision Separation**: Distinguishes `automated_detection` (flagging stage) from `automated_decision` (final sanction execution).
+- **Exact Schema Semantics**: Preserves literal regulatory definitions (`AUTOMATED_DECISION_FULLY`, `AUTOMATED_DECISION_PARTIALLY`, `AUTOMATED_DECISION_NOT_AUTOMATED`) without inferring unmeasured internal workflows.
+- **Volume-Weighted Aggregation**: All category shares, platform rates, and prevalence metrics are weighted by `SUM(count)`.
+- **Category-Level Sparsity Standard**: Explicit 48-slice Cartesian grid (3 platforms × 16 categories); zero-volume slices report `NaN`/null (never false 0.0%) and shares $<0.10\%$ are flagged as sparse.
+- **Practical Effect Sizes Over P-Values**: Evaluates substantive effect magnitude (percentage-point differences and rate ratios) rather than $p$-values, which become uninformative on datasets of 660M+ records.
 
-> **Key Takeaway**:  
-> Out-of-window dates for the core services are negligible (< 0.002% overall and 0% future-dated). These records are preserved intact in `data/raw/` without alteration and will be handled explicitly during downstream validation and processing. Membership in the harmonized comparative analysis window continues to be determined strictly by `created_at`.
+For complete verification logs and independent replication checks, see [reports/phase5_validation.md](reports/phase5_validation.md).
 
 ---
 
-## Planned Analysis Workflow
+## Findings
 
-1. **Phase 1 — Setup (Complete)**: Repository structure, dependencies, git configurations, and tracking setup.
-2. **Phase 2 — Data Acquisition (Complete)**: Bulk acquisition and QA of official DSA complete aggregated Parquet files via `dsa-tdb` covering 33 months (2023-09-25 to 2026-05-31).
-3. **Phase 3 — Supplementary Historical Data (Next)**: Extracting quarterly platform enforcement reports (Meta Community Standards, YouTube Community Guidelines, TikTok Community Guidelines) for longitudinal comparison.
-4. **Phase 4 — Schema Reconciliation**: Harmonizing platform-specific categorization taxonomies with the DSA canonical taxonomy.
-5. **Phase 5 — Core Metrics**: Calculating automation rates and consolidated enforcement-action distributions for the harmonized era (2025-07-01 to 2026-05-31).
-6. **Phase 6 — Analysis & Headline Findings**: In-depth exploratory analysis pinpointing notable cross-platform divergences.
-7. **Phase 7 — Deliverable & Reporting**: Generating visual charts, executive writeups, and actionable Trust & Safety recommendations.
+### 1. Automated Detection Is Universally High (>95%)
+All three platforms detect $>95.5\%$ of violative content through automated systems (spread: **3.36 pp**; rate ratios: 0.98x–1.04x). Detection automation is an industry-wide commodity that provides negligible competitive differentiation.
+
+![Chart 1: Detection vs Decision Automation](reports/charts/01_detection_vs_decision.png)
+
+### 2. The Scams & Fraud Decision-Automation Divide (Primary Finding)
+In Scams & Fraud (90.8M SoRs), platforms diverge diametrically: YouTube reports only **0.25%** of decisions involving automated means (99.75% taken without automated means), while TikTok automates **84.94%** fully, and Instagram reports **99.45%** with automated participation (and 98.77% account termination).
+
+![Chart 2: Scams & Fraud Decision Automation](reports/charts/02_scams_decision_automation.png)
+
+### 3. Persistent 11-Month Stability
+Across all 11 monthly partitions from July 2025 to May 2026, the scam decision-automation ranking never reverses. YouTube's monthly decision-automation rate in scams is consistently $<0.6\%$ in every single month.
+
+![Chart 3: Monthly Persistence of Scams Decision Gap](reports/charts/03_scams_monthly_consistency.png)
+
+### 4. Category Composition Explains Platform-Wide Gaps
+While TikTok leads YouTube by **37.76 percentage points** in overall decision automation (92.44% vs 54.67%), this gap collapses to **0.06 percentage points** in their largest shared category (**Terms of Service violations**, 400.8M SoRs combined), where TikTok reports **93.84%** and YouTube reports **93.78%** decision automation. Aggregate platform averages are heavily distorted by category composition.
+
+![Chart 4: Category Mix Context](reports/charts/04_category_mix_context.png)
+
+### 5. Divergent Enforcement Compliance Architectures
+Platforms enforce actions at different entity layers: Instagram enforces primarily via account termination (**88.47%** overall; and in Scams & Fraud, **98.7735%** [47,384,761 of 47,973,134 SoRs] record `ACCOUNT_TERMINATED`), YouTube enforces almost exclusively via content removal (**91.07%**), and TikTok deploys non-removal visibility restrictions (**52.57%**) alongside content removals (**44.76%**).
+
+![Chart 5: Enforcement Action Prevalence](reports/charts/05_enforcement_actions.png)
+
+---
+
+## Actionable Recommendation
+
+```
+========================================================================================
+RECOMMENDATION:
+Safety teams should audit the decision-stage automation boundary in Scams & Fraud.
+Where automation is unusually low or high relative to peers, evaluate:
+- false-positive rates
+- appeal rates
+- reversal rates
+- handling time
+- harm severity
+- escalation patterns
+before changing the automation mix.
+========================================================================================
+```
+
+The benchmark identifies **WHERE investigation is warranted**; it does not declare which platform has the "optimal" automation level. Teams must evaluate operational capacity and handling latency against false-positive risks before altering automation thresholds.
 
 ---
 
@@ -99,59 +118,92 @@ A comprehensive diagnostic of `application_date` across all 33 downloaded monthl
 
 ```text
 dsa-moderation-benchmark/
-├── .gitignore               # Excludes raw data, virtual environments, caches, and credentials
-├── requirements.txt         # Core dependencies with EC package registry URL
-├── README.md                # Project documentation and setup guide
+├── .gitignore               # Excludes raw Parquet files, virtual environments, caches
+├── requirements.txt         # Core dependencies (pyarrow, pandas, matplotlib, dsa-tdb)
+├── README.md                # Project landing page and executive summary
+├── MAPPING.md               # Authoritative 12-rule methodological specification
 ├── data/
-│   ├── raw/                 # Untouched downloaded SoR files and platform reports (gitignored)
-│   │   ├── dsa_aggregates/  # Official DSA pre-computed complete aggregates (Parquet)
-│   │   └── README.md        # Documentation on raw data storage and reproducibility
-│   └── processed/           # Cleaned, reconciled, and aggregate datasets (.gitkeep)
-├── notebooks/               # Jupyter notebooks for exploratory data analysis (.gitkeep)
-├── src/
-│   ├── download_dsa.py      # DSA data acquisition module with strict safety guards
-│   └── .gitkeep             # Reusable Python modules
-└── reports/                 # Analysis writeups, exports, and benchmark charts (.gitkeep)
+│   ├── raw/                 # Untouched raw Parquet aggregates & supplementary data (gitignored)
+│   └── processed/           # Compact, reproducible analytical CSV tables
+│       ├── category_volume.csv                 # 48 rows: Cartesian volume and sparsity
+│       ├── automation_overall.csv              # 3 rows: Platform-wide benchmark metrics
+│       ├── automation_by_category.csv          # 48 rows: Category automation metrics
+│       ├── automation_monthly.csv              # 33 rows: Monthly time-series
+│       ├── automation_category_monthly.csv     # 409 rows: Category-monthly panel
+│       ├── enforcement_action_prevalence.csv   # 720 rows: Granular action prevalence
+│       ├── enforcement_action_overall.csv      # 45 rows: Platform-wide action prevalence
+│       └── platform_effect_sizes.csv           # 9 rows: Pairwise effect sizes
+├── reports/
+│   ├── final_report.md                         # Comprehensive portfolio final report
+│   ├── phase5_validation.md                    # Exact arithmetic and reconciliation audit
+│   ├── phase6_candidate_findings.md            # Scorecard and root-cause decompositions
+│   ├── supplementary_data_manifest.md          # 21-quarter supplementary data catalog
+│   └── charts/                                 # High-resolution benchmark PNG charts
+│       ├── 01_detection_vs_decision.png
+│       ├── 02_scams_decision_automation.png    # HERO CHART
+│       ├── 03_scams_monthly_consistency.png
+│       ├── 04_category_mix_context.png
+│       └── 05_enforcement_actions.png
+└── src/
+    ├── download_dsa.py      # Automated DSA Parquet acquisition pipeline
+    ├── load_dsa.py          # Memory-efficient PyArrow chunked data loader
+    ├── metrics.py           # Reproducible Phase 5 metric computation engine
+    └── visualize.py         # Phase 7 publication-quality chart generator
 ```
 
 ---
 
-## Setup & How to Run
+## Reproduce
 
-### 1. Prerequisites
-- Python 3.10+ recommended
-- Git
+To reproduce this benchmark from scratch:
 
-### 2. Environment Setup & Dependency Installation
-Clone the repository and create a virtual environment:
+### 1. Prerequisites & Environment Setup
 ```bash
 git clone https://github.com/AmitejSingh1/dsa-moderation-benchmark.git
 cd dsa-moderation-benchmark
 
-# Create virtual environment
+# Create and activate virtual environment
 python -m venv .venv
-
-# Activate virtual environment
-# Windows (PowerShell):
+# Windows:
 .\.venv\Scripts\Activate.ps1
 # Linux / macOS:
 source .venv/bin/activate
-```
 
-Install dependencies:
-```bash
+# Install dependencies (includes EC GitLab registry for dsa-tdb)
 pip install -r requirements.txt
 ```
 
-> **Note on `dsa-tdb` Package Registry**:  
-> The official `dsa-tdb` package is hosted on the European Commission's GitLab package registry rather than standard PyPI. `requirements.txt` includes `--extra-index-url https://code.europa.eu/api/v4/projects/943/packages/pypi/simple` at the top, allowing standard `pip install -r requirements.txt` to seamlessly locate and install the package without manual registry configuration.
-
-### 3. Data Acquisition
-The data acquisition script enforces safety guards requiring explicit dates:
+### 2. Acquire Official DSA Parquet Aggregates
+Raw data files (~5.15 GB) are excluded from Git and must be downloaded locally:
 ```bash
-# Dry run to inspect files without downloading:
-python src/download_dsa.py --from-date 2023-09-25 --to-date 2026-05-31 --dry-run
-
-# Run full acquisition (skips already-downloaded partitions):
+# Acquire complete monthly aggregates (2023-09-25 through 2026-05-31)
 python src/download_dsa.py --from-date 2023-09-25 --to-date 2026-05-31
 ```
+
+### 3. Compute Validated Benchmark Metrics
+Transforms raw Parquet partitions into compact analytical CSVs in `data/processed/`:
+```bash
+python src/metrics.py
+```
+
+### 4. Regenerate Benchmark Visualizations
+Renders all publication-quality static PNG charts in `reports/charts/`:
+```bash
+python src/visualize.py
+```
+
+---
+
+## Limitations
+
+- **Administrative Reporting Boundary**: Statements of Reasons measure actions taken and reported under Article 17, not the total prevalence of violative content on platforms.
+- **Accuracy Is Not Measured**: DSA aggregates record automation involvement; they do not measure precision, recall, or false-positive rates.
+- **No Appeal Outcomes in Aggregates**: Parquet aggregates do not link initial SoRs to user appeal outcomes or content restoration rates.
+- **Within-Category Composition**: Unobserved differences in language, content format (short-form video vs long-form video vs image), or geographic origin may exist within categories.
+- **TikTok Batch Reporting**: TikTok's January 2026 volume contains delayed batch submissions, but sensitivity analysis confirms that excluding January shifts its automation metrics by $<0.25$ percentage points.
+
+---
+
+## Full Report
+
+For complete methodological discussions, sensitivity decompositions, and extended operational analyses, read the **[Full Benchmark Report](reports/final_report.md)**.
