@@ -1,0 +1,4 @@
+platform,represented_sors,automated_detection_numerator,automated_detection_rate,fully_automated_decision_numerator,fully_automated_decision_rate,any_automated_decision_numerator,decision_with_any_automation_rate
+TikTok,480532153,467328339,0.97252252,444185856,0.9243624,444189374,0.92436972
+YouTube,88376558,87392106,0.98886071,44009286,0.49797466,48317326,0.54672107
+Instagram,92756287,88610815,0.95530791,0,0.0,88610815,0.95530791
