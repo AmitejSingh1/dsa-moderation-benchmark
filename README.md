@@ -119,7 +119,8 @@ The benchmark identifies **WHERE investigation is warranted**; it does not decla
 ```text
 dsa-moderation-benchmark/
 ├── .gitignore               # Excludes raw Parquet files, virtual environments, caches
-├── requirements.txt         # Core dependencies (pyarrow, pandas, matplotlib, dsa-tdb)
+├── requirements.txt         # Core dependencies (pyarrow, pandas, matplotlib, plotly, streamlit)
+├── app.py                   # Phase 8 interactive Streamlit portfolio dashboard
 ├── README.md                # Project landing page and executive summary
 ├── MAPPING.md               # Authoritative 12-rule methodological specification
 ├── data/
@@ -145,11 +146,33 @@ dsa-moderation-benchmark/
 │       ├── 04_category_mix_context.png
 │       └── 05_enforcement_actions.png
 └── src/
+    ├── dashboard_utils.py   # Cached data loader, color constants, and Plotly layout helpers
     ├── download_dsa.py      # Automated DSA Parquet acquisition pipeline
+    ├── download_supplementary.py # Supplementary platform transparency scraper
     ├── load_dsa.py          # Memory-efficient PyArrow chunked data loader
     ├── metrics.py           # Reproducible Phase 5 metric computation engine
     └── visualize.py         # Phase 7 publication-quality chart generator
 ```
+
+---
+
+## Interactive Dashboard
+
+An interactive, command-center Streamlit dashboard is included for exploring the benchmark findings, category distributions, monthly time series, and enforcement profiles. The dashboard reads strictly from committed files in `data/processed/` and requires no external downloads or database setup.
+
+### Launch Locally:
+```bash
+streamlit run app.py
+```
+
+The application provides:
+- **Executive Hero**: Immediate 30-second summary of the primary finding in Scams & Fraud.
+- **Stage Comparison**: Visual proof separating universally high detection (>95%) from divergent decision automation.
+- **Scams & Fraud Deep Dive**: Platform cards with exact regulatory decision semantics (`FULLY`, `PARTIALLY`, `NOT_AUTOMATED`).
+- **11-Month Robustness**: Monthly panel tracking zero rank reversals across 11 partitions.
+- **Category Explorer**: Interactive policy category inspection with automatic sparsity filtering (`<0.10%` share).
+- **Composition Analysis**: Side-by-side contrast demonstrating how platform-wide averages collapse to parity in core Terms of Service enforcements.
+- **Enforcement Action Profiles**: Multi-label prevalence breakdown across content and account-level restrictions.
 
 ---
 
@@ -192,6 +215,11 @@ Renders all publication-quality static PNG charts in `reports/charts/`:
 python src/visualize.py
 ```
 
+### 5. Launch Interactive Portfolio Dashboard
+```bash
+streamlit run app.py
+```
+
 ---
 
 ## Limitations
@@ -207,3 +235,4 @@ python src/visualize.py
 ## Full Report
 
 For complete methodological discussions, sensitivity decompositions, and extended operational analyses, read the **[Full Benchmark Report](reports/final_report.md)**.
+
