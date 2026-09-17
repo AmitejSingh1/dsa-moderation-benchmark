@@ -1,0 +1,12 @@
+--extra-index-url https://code.europa.eu/api/v4/projects/943/packages/pypi/simple
+
+# Full data acquisition and local analysis environment
+# Note: dsa-tdb requires Python >=3.10,<3.14
+dsa-tdb
+pandas
+pyarrow
+matplotlib
+plotly
+streamlit
+jupyter
+

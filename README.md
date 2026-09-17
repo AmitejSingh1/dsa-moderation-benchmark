@@ -119,7 +119,8 @@ The benchmark identifies **WHERE investigation is warranted**; it does not decla
 ```text
 dsa-moderation-benchmark/
 ├── .gitignore               # Excludes raw Parquet files, virtual environments, caches
-├── requirements.txt         # Core dependencies (pyarrow, pandas, matplotlib, plotly, streamlit)
+├── requirements.txt         # Lightweight runtime dependencies for Streamlit deployment (pandas, plotly, streamlit)
+├── requirements-analysis.txt # Full local data acquisition & analysis environment (dsa-tdb, pyarrow, matplotlib, jupyter)
 ├── app.py                   # Phase 8 interactive Streamlit portfolio dashboard
 ├── README.md                # Project landing page and executive summary
 ├── MAPPING.md               # Authoritative 12-rule methodological specification
@@ -160,8 +161,9 @@ dsa-moderation-benchmark/
 
 An interactive, command-center Streamlit dashboard is included for exploring the benchmark findings, category distributions, monthly time series, and enforcement profiles. The dashboard reads strictly from committed files in `data/processed/` and requires no external downloads or database setup.
 
-### Launch Locally:
+### Launch Locally (Dashboard Only):
 ```bash
+pip install -r requirements.txt
 streamlit run app.py
 ```
 
@@ -181,6 +183,9 @@ The application provides:
 To reproduce this benchmark from scratch:
 
 ### 1. Prerequisites & Environment Setup
+
+`requirements.txt` is intentionally lightweight for Streamlit deployment, containing only the runtime dependencies needed to run `app.py` from committed processed CSVs. `requirements-analysis.txt` contains the full data acquisition and analysis environment including `dsa-tdb`, `pyarrow`, `matplotlib`, and `jupyter` (requires Python $\ge 3.10, < 3.14$).
+
 ```bash
 git clone https://github.com/AmitejSingh1/dsa-moderation-benchmark.git
 cd dsa-moderation-benchmark
@@ -191,9 +196,18 @@ python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 # Linux / macOS:
 source .venv/bin/activate
+```
 
-# Install dependencies (includes EC GitLab registry for dsa-tdb)
+#### Option A: Dashboard Only (Lightweight)
+```bash
 pip install -r requirements.txt
+streamlit run app.py
+```
+
+#### Option B: Full Local Analysis & Data Acquisition
+```bash
+# Install complete acquisition/analysis stack (includes EC GitLab registry for dsa-tdb)
+pip install -r requirements-analysis.txt
 ```
 
 ### 2. Acquire Official DSA Parquet Aggregates
